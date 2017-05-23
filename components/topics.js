@@ -40,4 +40,5 @@ const Header = styled.h2`
 
 const ContainerSegment = styled.div`
     display: flex;
+    flex-wrap: wrap;
 `;

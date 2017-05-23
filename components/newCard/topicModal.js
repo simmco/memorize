@@ -1,21 +1,49 @@
+import React from "react";
 import { Button, Header, Input, TextArea, Modal } from "semantic-ui-react";
 import styled from "styled-components";
 
-export default props => (
-  <StyledModalContent>
-    {console.log(props.domain)}
-    <Modal.Header>
-      Add {props.type} {props.domain && "to " + props.domain}
-    </Modal.Header>
-    <StyledModalDescription>
-      <Header>Topic:</Header>
-      <Input placeholder="Add the Topic..." />
-      <Header>Description:</Header>
-      <StyledTextarea />
-    </StyledModalDescription>
-    <StyledButton color="green">Save</StyledButton>
-  </StyledModalContent>
-);
+class TopicModal extends React.Component {
+  state = {
+    topic: "",
+    description: ""
+  };
+  handleSave = (topic, description, domain) => {
+    this.props.addNew(topic, description, domain);
+    this.props.closeModal();
+  };
+  render() {
+    const { topic, description } = this.state;
+    const { domain, addNew, type } = this.props;
+    return (
+      <StyledModalContent>
+        <Modal.Header>
+          Add {type}
+        </Modal.Header>
+        <StyledModalDescription>
+          <Header>Topic:</Header>
+          <Input
+            onChange={e => this.setState({ topic: e.target.value })}
+            value={topic}
+            placeholder="Add the Topic..."
+          />
+          <Header>Description:</Header>
+          <StyledTextarea
+            onChange={e => this.setState({ description: e.target.value })}
+            value={description}
+          />
+        </StyledModalDescription>
+        <StyledButton
+          onClick={() => this.handleSave(topic, description, domain)}
+          color="green"
+        >
+          Save
+        </StyledButton>
+      </StyledModalContent>
+    );
+  }
+}
+
+export default TopicModal;
 
 const StyledModalContent = styled(Modal.Content)`
   padding: 2rem;

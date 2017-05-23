@@ -1,11 +1,11 @@
-import { FETCH_DOMAIN } from "../actions/types";
+import { FETCH_DOMAIN, ADD_DOMAIN } from "../actions/types";
 
 export default function(state = [], action) {
-  const { type, text, todo } = action;
-
-  switch (type) {
+  switch (action.type) {
     case FETCH_DOMAIN:
       return action.payload;
+    case ADD_DOMAIN:
+      return [...state, action.payload];
     // case REMOVE_DOMAIN:
     //   return state.filter(i => i !== todo);
     default:

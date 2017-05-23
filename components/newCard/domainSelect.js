@@ -2,22 +2,41 @@ import TopicModal from "./topicModal";
 import { Button, Modal, Dropdown } from "semantic-ui-react";
 import styled from "styled-components";
 
-export default props => (
-  <Container>
-    <Text>Domain:</Text>
-    <StyledDropdown
-      placeholder="Select Domain"
-      fluid
-      search
-      selection
-      options={props.array}
-      onChange={props.handleDomainSelect}
-    />
-    <Modal size="small" trigger={<Button>Add Domain</Button>}>
-      <TopicModal type="Domain" />
-    </Modal>
-  </Container>
-);
+export default class DomainSelect extends React.Component {
+  state = {
+    modalOpen: false
+  };
+  render() {
+    return (
+      <Container>
+        <Text>Domain:</Text>
+        <StyledDropdown
+          placeholder="Select Domain"
+          fluid
+          search
+          selection
+          options={this.props.array}
+          onChange={this.props.handleDomainSelect}
+        />
+        <Modal
+          size="small"
+          open={this.state.modalOpen}
+          trigger={
+            <Button onClick={() => this.setState({ modalOpen: true })}>
+              Add Domain
+            </Button>
+          }
+        >
+          <TopicModal
+            addNew={this.props.addNewDomain}
+            type="Domain"
+            closeModal={() => this.setState({ modalOpen: false })}
+          />
+        </Modal>
+      </Container>
+    );
+  }
+}
 
 const Container = styled.div`
     display: flex;

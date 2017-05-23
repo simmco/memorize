@@ -11,38 +11,43 @@ import * as actions from "../actions";
 import DomainSelect from "../components/newCard/domainSelect";
 import CategorySelect from "../components/newCard/categorySelect";
 
-const array = [
-  { text: "HTML", value: "HTML" },
-  { text: "CSS", value: "CSS" },
-  { text: "JavaScript", value: "Javascript" }
-];
-
-const buildObject = function(domains) {
+const buildDropdownObject = function(domains) {
   return domains.map(domain => {
-    return { text: domain.topic, value: domain.topic, key: domain._id };
+    return { text: domain.topic, value: domain._id, key: domain._id };
   });
 };
 
 class NewCard extends React.Component {
   state = {
-    description: " ",
-    selectedDomain: ""
+    selectedDomain: "",
+    selectedCategory: "",
+    cardTopic: "",
+    cardDescription: " "
   };
   componentDidMount = () => {
     this.props.fetchDomains();
   };
-  handleInput = e => {
-    this.setState({
-      description: e.target.value
-    });
-  };
   handleDomainSelect = (e, obj) => {
+    console.log(obj);
     this.setState({ selectedDomain: obj.value });
     this.props.fetchDomainsCategories(obj.value);
   };
+  handleCategorySelect = (e, obj) => {
+    console.log(obj.value);
+    this.setState({ selectedCategory: obj.value });
+  };
+  addNewDomain = (topic, description) => {
+    this.props.addNewDomain(topic, description);
+  };
+  addNewCategory = (topic, description, domainId) => {
+    this.props.addNewCategory(topic, description, domainId);
+  };
+  addNewCard = () => {
+    const { selectedCategory, cardTopic, cardDescription } = this.state;
+    this.props.addNewCard(cardTopic, cardDescription, selectedCategory);
+  };
   render() {
     const { domains, categories } = this.props;
-    const fetchedCategories = categories.length === 0 ? false : true;
     return (
       <Page>
         <PageWidth>
@@ -54,31 +59,40 @@ class NewCard extends React.Component {
 
               <DomainSelect
                 handleDomainSelect={this.handleDomainSelect}
-                array={buildObject(domains)}
+                array={buildDropdownObject(domains)}
+                addNewDomain={this.addNewDomain}
               />
 
               <CategorySelect
                 domain={this.state.selectedDomain}
-                fetching={!fetchedCategories}
-                array={buildObject(categories)}
+                handleCategorySelect={this.handleCategorySelect}
+                array={buildDropdownObject(categories)}
+                addNewCategory={this.addNewCategory}
               />
 
               <DefineTopic>
                 <Text>Topic:</Text>
-                <Input placeholder="Define..." />
+                <TopicInput
+                  onChange={e => this.setState({ cardTopic: e.target.value })}
+                  value={this.state.cardTopic}
+                  placeholder="Define..."
+                />
               </DefineTopic>
 
             </ContainerTopicSelection>
 
             <h2>Explanation:</h2>
             <ContainerCardInput>
-              <FormContainer
-                onChange={this.handleInput}
-                value={this.state.description}
-              />
-              <Markdown source={this.state.description} />
-            </ContainerCardInput>
 
+              <FormContainer
+                onChange={e =>
+                  this.setState({ cardDescription: e.target.value })}
+                value={this.state.cardDescription}
+              />
+              <Markdown source={this.state.cardDescription} />
+
+            </ContainerCardInput>
+            <Button onClick={this.addNewCard} color="green">Save</Button>
           </Container>
         </PageWidth>
       </Page>
@@ -112,8 +126,12 @@ const ContainerTopicSelection = styled.div`
 const DefineTopic = styled.div`
   display: flex;
   justify-content: space-between;
-  max-width: 272px;
+  max-width: 400px;
   margin: 2rem 0;
+`;
+
+const TopicInput = styled(Input)`
+  width: 305px;
 `;
 
 const StyledDropdown = styled(Dropdown)`

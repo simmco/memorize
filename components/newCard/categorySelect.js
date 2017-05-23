@@ -2,26 +2,47 @@ import TopicModal from "./topicModal";
 import { Button, Modal, Dropdown } from "semantic-ui-react";
 import styled from "styled-components";
 
-export default props => (
-  <Container>
-    <Text>Category:</Text>
-    <StyledDropdown
-      placeholder="Select Category"
-      fluid
-      search
-      selection
-      disabled={props.fetching}
-      options={props.array}
-    />
-    <Modal
-      disabled={!props.domain}
-      size="small"
-      trigger={<Button>Add Category</Button>}
-    >
-      <TopicModal domain={props.domain} type="Category" />
-    </Modal>
-  </Container>
-);
+export default class CategorySelect extends React.Component {
+  state = {
+    modalOpen: false
+  };
+  render() {
+    const { domain, array, addNewCategory, handleCategorySelect } = this.props;
+    return (
+      <Container>
+        <Text>Category:</Text>
+        <StyledDropdown
+          placeholder="Select Category"
+          fluid
+          search
+          selection
+          disabled={!domain}
+          options={array}
+          onChange={handleCategorySelect}
+        />
+        <Modal
+          size="small"
+          open={this.state.modalOpen}
+          trigger={
+            <Button
+              onClick={() => this.setState({ modalOpen: true })}
+              disabled={!domain}
+            >
+              Add Category
+            </Button>
+          }
+        >
+          <TopicModal
+            domain={domain}
+            type="Category"
+            addNew={addNewCategory}
+            closeModal={() => this.setState({ modalOpen: false })}
+          />
+        </Modal>
+      </Container>
+    );
+  }
+}
 
 const Container = styled.div`
     display: flex;
